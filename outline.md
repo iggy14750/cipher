@@ -1,7 +1,5 @@
-#Outline
-
+# Outline
 Abstract
 
 Motivation
-- Public Key Cryptosystems
---
+ * Public Key Cryptosystems
