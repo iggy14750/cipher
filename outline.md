@@ -1,7 +1,7 @@
 #Outline
 
-##Abstract
+Abstract
 
-##Motivation
--Public Key Cryptosystems
+Motivation
+- Public Key Cryptosystems
 --
