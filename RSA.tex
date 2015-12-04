@@ -8,5 +8,65 @@
         Beginning with the war messages of Julius Ceasar, to e-commerce in the modern day, encryption has served to hide messages from prying eyes.
         In this paper, we describe the Rivest-Shamir-Adleman (RSA) cipher, its motivation, mathematical basis, and some implementation details.
         
-
+    \section{Ceasar}
+        We can define encyption like this: "to change (information) from one form to another especially to hide its meaning (Merriam-Webster online)."  
+        For the purpose of this paper, "encryption algorithm" and "cipher" will be used interchangeably.  
+        With this, we can begin to talk about one of the most famous ancient ciphers, the Ceasar chipher, or a shift cipher.  
+        
+        Begin by assembling all of the letters of your alphabet (English, for our example), into a circle.  Then choose a key.  
+        We call this key $k$.  
+        This is an natural number less than the number of characters in your alphabet.
+        %the following needs to be a note.        
+        While it is possible to choose a key greater than the number of characters in your language, it is irrelevant as it behaves in a modular manner (ie, chooseing $k=30$ means the key behaves like $30=4 \(mod 26\)$ in English). This will be explained in detail shortly.
+        We then take the message and remove all non-alphabetic characters (spaces, numerals, punctuation, etc) and lowercase each character.
+        Following this, each character is taken one at a time and replaced by the character $k$ entries clockwise on our circle.
+        
+        An example is in order.  Suppose you wanted to share relatively sensitive information with someone you trust but no one else.  
+        You might use a shift cipher to do this.
+        Begin by choosing a key.  I shall choose $k=13$ for no particular reason, and share it with my trusted accomplice over secure channels, or in person.
+        We then write our message:
+        %Center this???
+        
+        I love MLP.
+        
+        Clearly, a compromising statement.  Now we remove all non-alphabetic characters and lowercase:
+        
+        ilovemlp
+        
+        We then apply our key of 13, by choosing the character 13 entries clockwise on our circle.  
+        We have:
+        
+        VYBIRZYC
+        
+        Notice how the letters "o", "v", and "p" have looped around to the beginning of the alphabet.  
+        This concept is key when we begin talking about modular arithmetic soon.
+        
+        So, we have encrypted our first message.  But how do we now get the original message back?  
+        For this, we simply now this process in reverse, by choosing each letter k entries *counter*-clockwise, and proceed to add capitalization and other characters as seems necessary from the context of the message.
+        
+        This is the oldest and simplest example of how one might hide a message that is sent over insecure channels, and as you might expect, it is a very, very weak encryption.
+        The disadvatges are:
+        1. There are only 25 possible keys to choose, and so even by hand it takes very little time to check each one.
+        2. If it is possible for an attacker to encrypt (called a chosen plaintext attack) or decrypt (chosen ciphertext attack) one singular letter with this key, the key yields itself immediately.
+        3. This cipher is very vaulnerable to a frequency analysis.  In any language, it is known that certian charaters and combinations of characters are used significatly more frequently than others.  For instance, "e" is the most commonly used letter in the English language, with an almost 13\% useage rate.  In any non-trivial amount of ciphertext you are reasonably assured that the most or second most common character is decrypted to "e".
+        4. Once one knows the encryption key, it is exactly the same information as the decryption key, meaning that it is impossible to have secure messages without sharing the key first, and then trusting your conversation partner.  
+        
+        We will very soon look at the state-of-the-art (in 1977) technology with none of these weaknesses, most importantly was the first method known to solve the final one.  
+        But first, a word about numbers.
+        
+    \section{Number Theory}
+        
+        
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
