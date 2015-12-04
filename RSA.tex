@@ -62,7 +62,7 @@
             Once one knows the encryption key, it is exactly the same information as the decryption key, meaning that it is impossible to have secure messages without first sharing the key in a secure setting, and then trusting your conversation partner.  
         \end{enumerate}
         
-        We will very soon look at the state-of-the-art (in 1977) technology with none of these weaknesses, most importantly was the first method known to solve the final one.  
+        We will very soon look at the state-of-the-art (in 1977) technology with none of these weaknesses, and--most importantly--was the first method known to solve the final one.  
         But first, a word about numbers.
         
     \section{Number Theory}
@@ -70,7 +70,8 @@
         Therefore, I will attempt to codify the important ideas simply and succinctly.  
         These are the rules of number theory, the study of the integers.  We shall use the convention $\mathbf{Z}$ to denote the set of all integers $\{...,-2,-1,0,1,2,...\}$.
         
-        \subsection{Divisibility} 
+        \subsection{Basic Definitions}
+        \subsubsection{Divisibility} 
         %This is a very intuitive idea, but it is important to point out the following./
         
         \underline{Definition} For $p, q, k \in\mathbf{Z}$, we say that p divides q, $p|q$, if and only if $q=pk$.
@@ -84,7 +85,7 @@
         Simple.
 		%$$x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$$
 		
-        \subsection{Primes}
+        \subsubsection{Primes}
         %Also very fundamental.
         \underline{Definition} A number $p>1$ that is divisible by only 1 and itself is called a prime number.  They are $\{2,3,5,7,11,...\}$.  Any integer $n>1$ that is not prime is called a composite.  An important fact about prime numbers is known as the \textbf{Prime Number Theorem}.\\Let $\pi(x)$ be the number of primes less than $x$. Then $$\pi(x)\approx\frac{x}{ln(x)} $$ in the sense that $$\lim_{x\to\infty}\pi(x)\frac{ln(x)}{x}=1 $$ Which also stems from the fact that there are infinitely many prime numbers, which is a necessary fact for our purposes.
         
@@ -92,6 +93,27 @@
         Using the above Prime Number Theorem, we can approximate: $$\pi(10^{100})-\pi(10^{99})\approx\frac{10^{100}}{ln(10^{100})} - \frac{10^{99}}{ln(10^{99})} \approx 3.9*10^{97}$$
         You could say we have a large pool to chose from.
         
+        Furthermore, every number has a unique \textbf{prime factorization}, meaning that it can be written as the product of primes.  These are always the same prime numbers and each number always has the same prime factorization.
+        
+        \subsubsection{Greatest Common Divisor}
+        \underline{Definition} The \textbf{greatest common divisor} of $a$ and $b$ is the largest positive integer dividing both $a$ and $b$ and is denoted by $gcd(a,b)$.
+        
+        \textbf{\textit{Examples}}\\
+        \underline{Definition} We say that $a$ and $b$ are \textbf{relatively prime} if and only if $gcd(a,b)=1$.
+        
+        \textbf{\textit{Examples}} 3 and 4 are relatively prime as $gcd(3,4)=1$.
+        
+        \subsection{Conguences}
+        The key concept of the RSA cipher is truly modular arithmetic.  
+        Before even defining how to use it, I think it would be helpful to point out that you use modular arithmetic every day, every time you look at a clock.
+        Hours are counted \textit{mod 12} (or \textit{mod 24}), minutes are counted \textit{mod 60}, etc.  
+        It is why we say ``one o'clock'' as apposed to ``thirteen o'clock.''
+        The defining characteristic of a modular arithmetic is ``looping around'' a modulus, so that values that seem inequivalent in normal arithmetic can represent the same value.
+        
+        
+        \underline{Definition} Let $a,b,k,n\in\mathbf{Z}$.  
+        We can say that $a\equiv b\ (mod\ n)$ --- which is read ``$a$ is congruent to $b$, mod $n$'' --- if and only if, $b=a+nk$.  
+        Or, equivalently, if $\displaystyle\frac{a-b}{n}=k\in\mathbf{Z}$.
         
         
         
