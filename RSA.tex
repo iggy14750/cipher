@@ -1,23 +1,23 @@
 \documentclass{article}
-\maketitle{The Mathematics of the RSA Cipher}
 \begin{document}
+\title{The Mathematics of the RSA Cipher}
+\author{Isaac B Goss}
+\maketitle
 
     \section{Abstract}
-        Secrecy is, I believe, a natural human tendancy.  One is really only able to be oneself under the guise of confidentiality, even when not explicit.%Could just start on the next sentence.
+        Secrecy is, I believe, a natural human tendency.  One is really only able to be oneself under the guise of confidentiality, even when not explicit.  %Could just start on the next sentence.
         It has been known that for most of the time in which humans used language, the medium through which one may communicate with any other one of similar knowledge, humans have also made attempts to hide such messages.
-        Beginning with the war messages of Julius Ceasar, to e-commerce in the modern day, encryption has served to hide messages from prying eyes.
+        Beginning with the war messages of Julius Caesar, to e-commerce in the modern day, encryption has served to hide messages from prying eyes.
         In this paper, we describe the Rivest-Shamir-Adleman (RSA) cipher, its motivation, mathematical basis, and some implementation details.
         
-    \section{Ceasar}
-        We can define encyption like this: "to change (information) from one form to another especially to hide its meaning (Merriam-Webster online)."  
-        For the purpose of this paper, "encryption algorithm" and "cipher" will be used interchangeably.  
-        With this, we can begin to talk about one of the most famous ancient ciphers, the Ceasar chipher, or a shift cipher.  
+    \section{Caesar}
+        We can define encryption like this: ``to change (information) from one form to another especially to hide its meaning (Merriam-Webster online).''  
+        For the purpose of this paper, ``encryption algorithm'' and ``cipher'' will be used interchangeably.  
+        With this, we can begin to talk about one of the most famous ancient ciphers, the shift cipher.  
         
-        Begin by assembling all of the letters of your alphabet (English, for our example), into a circle.  Then choose a key.  
+        Begin by assembling all of the letters of your alphabet (English, for our example), in order, into a circle.  Then choose a key.  
         We call this key $k$.  
-        This is an natural number less than the number of characters in your alphabet.
-        %the following needs to be a note.        
-        While it is possible to choose a key greater than the number of characters in your language, it is irrelevant as it behaves in a modular manner (ie, chooseing $k=30$ means the key behaves like $30=4 \(mod 26\)$ in English). This will be explained in detail shortly.
+        This is a natural number less than the number of characters in your alphabet.\footnote{While it is possible to choose a key greater than the number of characters in your language, it is irrelevant as it behaves in a modular manner (ie, choosing $k=30$ means the key behaves like $30\equiv4\ (mod\ 26)$ in English). This will be explained in detail shortly.}
         We then take the message and remove all non-alphabetic characters (spaces, numerals, punctuation, etc) and lowercase each character.
         Following this, each character is taken one at a time and replaced by the character $k$ entries clockwise on our circle.
         
@@ -26,35 +26,73 @@
         Begin by choosing a key.  I shall choose $k=13$ for no particular reason, and share it with my trusted accomplice over secure channels, or in person.
         We then write our message:
         %Center this???
-        
-        I love MLP.
+        \begin{center}
+        	I love MLP.
+        \end{center}
         
         Clearly, a compromising statement.  Now we remove all non-alphabetic characters and lowercase:
         
-        ilovemlp
+        \begin{center}
+        	ilovemlp
+        \end{center}
         
         We then apply our key of 13, by choosing the character 13 entries clockwise on our circle.  
         We have:
         
-        VYBIRZYC
+        \begin{center}
+        	VYBIRZYC
+        \end{center}
         
-        Notice how the letters "o", "v", and "p" have looped around to the beginning of the alphabet.  
+        Notice how the letters ``o'', ``v'', and ``p'' have ``looped around'' to the beginning of the alphabet.  
         This concept is key when we begin talking about modular arithmetic soon.
         
         So, we have encrypted our first message.  But how do we now get the original message back?  
-        For this, we simply now this process in reverse, by choosing each letter k entries *counter*-clockwise, and proceed to add capitalization and other characters as seems necessary from the context of the message.
+        For this, we simply perform this process in reverse, by choosing each letter k entries \textit{counter}-clockwise, and proceed to add capitalization and other characters as seems necessary from the context of the message.
         
         This is the oldest and simplest example of how one might hide a message that is sent over insecure channels, and as you might expect, it is a very, very weak encryption.
-        The disadvatges are:
-        1. There are only 25 possible keys to choose, and so even by hand it takes very little time to check each one.
-        2. If it is possible for an attacker to encrypt (called a chosen plaintext attack) or decrypt (chosen ciphertext attack) one singular letter with this key, the key yields itself immediately.
-        3. This cipher is very vaulnerable to a frequency analysis.  In any language, it is known that certian charaters and combinations of characters are used significatly more frequently than others.  For instance, "e" is the most commonly used letter in the English language, with an almost 13\% useage rate.  In any non-trivial amount of ciphertext you are reasonably assured that the most or second most common character is decrypted to "e".
-        4. Once one knows the encryption key, it is exactly the same information as the decryption key, meaning that it is impossible to have secure messages without sharing the key first, and then trusting your conversation partner.  
+        The disadvantages are:
+        \begin{enumerate}
+            \item
+            There are only 25 possible keys to choose, and so even by hand it takes very little time to check each one.
+            \item
+            If it is possible for an attacker to encrypt (called a chosen plaintext attack) or decrypt (chosen ciphertext attack) one singular letter with this key, the key yields itself immediately.
+            \item
+            This cipher is very vulnerable to a frequency analysis.  In any language, it is known that certain characters and combinations of characters are used significantly more frequently than others.  For instance, ``e'' is the most commonly used letter in the English language, with an almost 13\% usage rate.  In any non-trivial amount of ciphertext you are reasonably assured that the most or second most common character is decrypted to ``e''.
+            \item
+            Once one knows the encryption key, it is exactly the same information as the decryption key, meaning that it is impossible to have secure messages without first sharing the key in a secure setting, and then trusting your conversation partner.  
+        \end{enumerate}
         
         We will very soon look at the state-of-the-art (in 1977) technology with none of these weaknesses, most importantly was the first method known to solve the final one.  
         But first, a word about numbers.
         
     \section{Number Theory}
+        Many of these ideas will be understood by the reader in some intuitive way already, and while definitions are fun, it will be more fun to explain how RSA works.
+        Therefore, I will attempt to codify the important ideas simply and succinctly.  
+        These are the rules of number theory, the study of the integers.  We shall use the convention $\mathbf{Z}$ to denote the set of all integers $\{...,-2,-1,0,1,2,...\}$.
+        
+        \subsection{Divisibility} 
+        %This is a very intuitive idea, but it is important to point out the following./
+        
+        \underline{Definition} For $p, q, k \in\mathbf{Z}$, we say that p divides q, $p|q$, if and only if $q=pk$.
+        
+        \noindent\underline{Examples}
+        \begin{itemize}
+            \item $3|6$ as $6=3k$ for $k=2\in\mathbf{Z}$.
+            \item $25|400$ as $400=25k$ for $k=16\in\mathbf{Z}$.
+            \item $3\not|10$ as $10=3k$ for $k=3\frac{1}{3}\not\in\mathbf{Z}$.
+        \end{itemize}
+        Simple.
+		%$$x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}$$
+		
+        \subsection{Primes}
+        %Also very fundamental.
+        \underline{Definition} A number $p>1$ that is divisible by only 1 and itself is called a prime number.  They are $\{2,3,5,7,11,...\}$.  Any integer $n>1$ that is not prime is called a composite.  An important fact about prime numbers is known as the \textbf{Prime Number Theorem}.\\Let $\pi(x)$ be the number of primes less than $x$. Then $$\pi(x)\approx\frac{x}{ln(x)} $$ in the sense that $$\lim_{x\to\infty}\pi(x)\frac{ln(x)}{x}=1 $$ Which also stems from the fact that there are infinitely many prime numbers, which is a necessary fact for our purposes.
+        
+        Say we want to think up a prime number of about 100 digits long.  How many to we have to choose from?  
+        Using the above Prime Number Theorem, we can approximate: $$\pi(10^{100})-\pi(10^{99})\approx\frac{10^{100}}{ln(10^{100})} - \frac{10^{99}}{ln(10^{99})} \approx 3.9*10^{97}$$
+        You could say we have a large pool to chose from.
+        
+        
         
         
 \end{document}
