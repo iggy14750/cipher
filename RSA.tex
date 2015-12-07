@@ -129,8 +129,9 @@
 	        Division, however is missing.  If you were given $5x\equiv 1\ (mod\ 12)$, you would have to fight the urge to conclude that $x=\frac{1}{5}$.  
 	        The problem with this is that modular arithmetic is solely defined under the integers.  
 	        So, how can we solve this?  We introduce the \textbf{multiplicative inverse} to solve problems like this.\\
-	        \underline{Definition} For $a, a^{-1}, n, k \in\mathbf{Z}$, and for $gcd(a,n)=1$, $a^{-1}$ is the multiplicative inverse of $a$, ie, $aa^{-1}\equiv1$, $(mod\ n)$, if and only if, $1=aa^{-1}+nk$.\\
-	        For these purposes, it may be useful to think of fractions in standard arithmetic as a multiplicative inverse, rather than a discrete value.  
+	        \underline{Definition} For $a, a^{-1}, n, k \in\mathbf{Z}$, and for $gcd(a,n)=1$, $a^{-1}$ is the multiplicative inverse of $a$, ie, $aa^{-1}\equiv1$, $(mod\ n)$, if and only if, $1=aa^{-1}+nk$.
+	        
+            For these purposes, it may be useful to think of fractions in standard arithmetic as a multiplicative inverse, rather than a discrete value.  
 	        $\frac{1}{5}$, for instance, is really handy to think of as a value which yields 1 when multiplied by 5.  
 	        
 	        So it goes in modular arithmetic.  
@@ -149,21 +150,49 @@
 	        $$4\times4 \equiv 16 \equiv4 \not\equiv 3\ (mod\ 12)$$
 	        $$...$$
 	        This happens because $gcd(4,12)=4$ ie, they are not relatively prime.
+            
+        \subsection{Modular Exponents}
+            And then there was the exponent.  While, as stated above, exponentiation with natural numbers follows predictable rules, finding a root is quite a bit different.  
+            \textbf{\textit{Example}} Suppose we wanted to solve $a^{2}\equiv 4\ (mod\ 21)$  for $a$.  
+            You might, again, feel the urge to find the square root of 5 to answer the question, but this is not an integer, so using our standard rules of inverse powers cannot be made general.  
+            What we need is an integer that solves which can be squared and when reduced $(mod\ 21)$ leaves us with 4.  
+            The reader might notice that $5^2\equiv 25 \equiv 4\ (mod\ 21)$.  This is the solution to our example, but how do we make working with modular exponents general?
+            
+            \subsubsection{Euler's Theorem}
+                First and foremost, we have to talk about Euler's $\phi$-function.
+                
+                \noindent\underline{Definition} Let $n\in\mathbf{N}$ be a positive integer. $\phi(n)=|\{k\in\mathbf{N}:k<n$ and $gcd(k,n)=1\}|$, ie, represents the positive integers less than n with which n is relatively prime.
+                
+                \textbf{\textit{Examples}}
+                \hspace*{\fill}
+                    {$ \phi(7)=|\{1,2,3,4,5,6\}|=6$} \hfill {$ \phi(10)=|\{1,3,7,9\}|=4 $} \hfill {$ \phi(5)=|\{1,2,3,4\}|=4 $}
+                \hspace*{\fill}
+                
+                Notice that, basically by definition, for any prime $p$, $\phi(p)=p-1$.
 	        
-	    \section{The Rivest-Shamir-Adleman Encryption Algorithm}
-	        So now we have finally come to the heart of the matter.  How do we secure messages over the open internet?  The literature often begins by establishing characters Alice, Bob, and Eve, and of the sake of tradition, I will join them.
-	        
-	        Suppose Alice wants to send a message to Bob over the open internet, but doesn't want Eve, who can intercept their traffic, to know what it said.  Now, Alice and Bob have never met, so they can't share the key to a shift cipher, for example (or, of course, one to a more competent cipher), because then Eve could decrypt their messages anyway.
-	        
-	        It's clear we need a new approach to solve problems like this.  The key breakthrough here is the use of an \textbf{asymmetric key}.  
-	        What this means, is that we have a different piece of information to \textit{encrypt} the message than is needed to \textit{decrypt} the message.  
-	        Or, more importantly, that finding the encryption (public) key given the decryption (private) key is trivial, while doing the inverse is computationally infeasible.  
-	        And then, we give away the encryption key to anyone who want it.
-	        
-	        Imagine the public key as a pad lock, and the private key as the key that opens that pad lock.  You can ask for another's padlock, even if you have never met, and then you will be able to send message locked, in a box perhaps, with this padlock.  It's no worry if the box is intercepted, and the adversary has access to an identical padlock, because short of brute force, there is no way to use the padlock to open up the box.
-	        
-	        
-	        
+	\section{The Rivest-Shamir-Adleman Encryption Algorithm}
+        So now we have finally come to the heart of the matter.  How do we secure messages over the open internet?  The literature often begins by establishing characters Alice, Bob, and Eve, and of the sake of tradition, I will join them.
+     
+        Suppose Alice wants to send a message to Bob over the open internet, but doesn't want Eve, who can intercept their traffic, to know what it said.  Now, Alice and Bob have never met, so they can't share the key to a shift cipher, for example (or, of course, one to a more competent cipher), because then Eve could decrypt their messages anyway.
+     
+        It's clear we need a new approach to solve problems like this.  The key breakthrough here is the use of an \textbf{asymmetric key}.  
+        What this means, is that we have a different piece of information to \textit{encrypt} the message than is needed to \textit{decrypt} the message.  
+        Or, more importantly, that finding the encryption (public) key given the decryption (private) key is trivial, while doing the inverse is computationally infeasible.  
+        And then, we give away the encryption key to anyone who want it.
+     
+        Imagine the public key as a pad lock, and the private key as the key that opens that pad lock.  You can ask for another's padlock, even if you have never met, and then you will be able to send message locked, in a box perhaps, with this padlock.  It's no worry if the box is intercepted, and the adversary has access to an identical padlock, because short of brute force, there is no way to use the padlock to open up the box.
+     
+        Here's how it works.
+        
+        Bob needs to do some set-up before Alice can send him a message.  First, he chooses two large prime numbers, p and q, and then computes their product, n.  He also chooses a smaller integer e.  
+        He keeps p and q secret, but sends n and e to Alice, who then encodes her message as a 
+        number\footnote{Typically as ASCII, which was the standard way to represent all text on a computer in 1977.  We now use a superset of ASCII known as Unicode.} 
+        m, breaks it into pieces less than n, and calculates the ciphertext c with $c\equiv m^{e}\ (mod\ n)$.  
+        She then sends this ciphertext back to Bob, who was able to quickly calculate the decryption key based on his information.  
+        The key used to decrypt the cipher text is the multiplicative inverse of the number used to encrypt the message.  We call this number d.  We want a value that satisfies the following.
+        $$c^{d}\equiv (m^{e})^{d}\equiv m^{ed} \equiv m^1 \equiv m\ (mod\ n)$$
+        
+        So, how do we find d?  For this, we need 
 	        
         
 \end{document}
