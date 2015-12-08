@@ -1,6 +1,10 @@
 \documentclass{article}
 \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\newtheorem{thrm}{\textbf{Theorem}}
 \begin{document}
 \title{The Mathematics of the RSA Cipher}
 \author{Isaac B Goss}
@@ -26,13 +30,12 @@
         We call this key $k$.  
         This is a natural number less than the number of characters in your alphabet.\footnote{While it is possible to choose a key greater than the number of characters in your language, it is irrelevant as it behaves in a modular manner (ie, choosing $k=30$ means the key behaves like $30\equiv4\ (mod\ 26)$ in English). This will be explained in detail shortly.}
         We then take the message and remove all non-alphabetic characters (spaces, numerals, punctuation, etc) and lowercase each character.
-        Following this, each character is taken one at a time and replaced by the character $k$ entries clockwise on our circle.
+        Following this, each character is taken one at a time and replaced by the character $k$ entries clockwise on our circle.\cite{trappewash}
         
         An example is in order.  Suppose you wanted to share relatively sensitive information with someone you trust but no one else.  
         You might use a shift cipher to do this.
         Begin by choosing a key.  I shall choose $k=13$ for no particular reason, and share it with my trusted accomplice over secure channels, or in person.
         We then write our message:
-        %Center this???
         \begin{center}
         	I love MLP.
         \end{center}
@@ -66,7 +69,7 @@
             \item
             This cipher is very vulnerable to a frequency analysis.  In any language, it is known that certain characters and combinations of characters are used significantly more frequently than others.  For instance, ``e'' is the most commonly used letter in the English language, with an almost 13\% usage rate.  In any non-trivial amount of ciphertext you are reasonably assured that the most or second most common character is decrypted to ``e''.
             \item
-            Once one knows the encryption key, it is exactly the same information as the decryption key, meaning that it is impossible to have secure messages without first sharing the key in a secure setting, and then trusting your conversation partner.  
+            Once one knows the encryption key, it is exactly the same information as the decryption key, meaning that it is impossible to have secure messages without first sharing the key in a secure setting with a trusted conversation partner.  
         \end{enumerate}
         
         We will very soon look at the state-of-the-art (in 1977) technology with none of these weaknesses, and--most importantly--was the first method known to solve the final one.  
@@ -78,6 +81,7 @@
         These are the rules of number theory, the study of the integers.  We shall use the convention $\mathbf{Z}$ to denote the set of all integers $\{...,-2,-1,0,1,2,...\}$.
         
         \subsection{Basic Definitions}
+        These definitions are all thanks to Trappe-Washington.\cite{trappewash}
         %\begin{itemize}
             \textbf{Divisibility}\\
             \underline{Definition} For $p, q, k \in\mathbf{Z}$, we say that p \textbf{divides} q, $p|q$, if and only if $q=pk$.
@@ -111,7 +115,7 @@
         \subsection{Conguences}
 	        The key concept of the RSA cipher is truly modular arithmetic.  
 	        Before even defining how to use it, I think it would be helpful to point out that you use modular arithmetic every day, every time you look at a clock.
-	        Hours are counted \textit{mod 12} (or \textit{mod 24}), minutes are counted \textit{mod 60}, etc.  
+	        Hours are counted \textit{mod 12}, for example.  
 	        It is why we say ``one o'clock'' as apposed to ``thirteen o'clock.''
 	        The defining characteristic of a modular arithmetic is ``looping around'' a modulus, so that values that seem inequivalent in normal arithmetic can represent the same value.
 	        
@@ -152,11 +156,19 @@
 	        This happens because $gcd(4,12)=4$ ie, they are not relatively prime.
             
         \subsection{Modular Exponents}
-            And then there was the exponent.  While, as stated above, exponentiation with natural numbers follows predictable rules, finding a root is quite a bit different.  
-            \textbf{\textit{Example}} Suppose we wanted to solve $a^{2}\equiv 4\ (mod\ 21)$  for $a$.  
-            You might, again, feel the urge to find the square root of 5 to answer the question, but this is not an integer, so using our standard rules of inverse powers cannot be made general.  
-            What we need is an integer that solves which can be squared and when reduced $(mod\ 21)$ leaves us with 4.  
-            The reader might notice that $5^2\equiv 25 \equiv 4\ (mod\ 21)$.  This is the solution to our example, but how do we make working with modular exponents general?
+            And then there was the exponent.  While, as stated above, exponentiation with natural numbers follows predictable rules, finding a root is quite a bit different.
+            
+            \textbf{\textit{Example}} Suppose we wanted to solve $a^{2}\equiv 3\ (mod\ 22)$  for $a$.  
+            You might, again, feel the urge to find the square root of 3 to answer the question, but this is not an integer, so using our standard rules of inverse powers cannot be made general.  
+            What we need is an integer that solves which can be squared and when reduced $(mod\ 22)$ leaves us with 3.  
+            The reader might notice that $5^2\equiv 25 \equiv 3\ (mod\ 22)$.  This is the solution to our example, but how do we make working with modular exponents general?
+            
+            \subsubsection{Fermat's Little Theorem}
+	            \begin{thrm}[Fermat's Little Theorem]
+	            	Let $p$ be a prime number.  $\forall a\in\mathbf{Z}, \exists k\in\mathbf{Z}$ such that $a^p-a=kp$, ie, $a^p\equiv a\ (mod\ p)$.\footnote{``And this proposition is generally true for all series and for all prime numbers; the proof of which I would send to you, if I did not fear it being too long." - Pierre de Fermat}\cite{Long}
+	            \end{thrm}
+	            
+            
             
             \subsubsection{Euler's Theorem}
                 First and foremost, we have to talk about Euler's $\phi$-function.
@@ -168,10 +180,30 @@
                     {$ \phi(7)=|\{1,2,3,4,5,6\}|=6$} \hfill {$ \phi(10)=|\{1,3,7,9\}|=4 $} \hfill {$ \phi(5)=|\{1,2,3,4\}|=4 $}
                 \hspace*{\fill}
                 
-                Notice that, basically by definition, for any prime $p$, $\phi(p)=p-1$.
+                Notice that, basically by definition, for any prime $p$, $\phi(p)=p-1$.  
+                This can be made more general $\forall n \in\mathbf{N}$ with  $\phi(n)=n\prod_{p|n}(1-\frac{1}{p})$.  
+                Where $p|n$ represents the prime factors of $n$.
+                Therefore, to calculate $\phi(n)$, one must know the prime factors of $n$. 
+                
+                \begin{thrm}[Euler's Theorem] Let $n\in\mathbf{N},a\in\mathbf{Z}$ and $gcd(a,n)=1$.  Then $a^{\phi(n)}\equiv 1\ (mod\ n)$.
+                \end{thrm}
+                
+                %\underline{Proof:
+                \begin{proof}
+	                Let $k=\phi(n)$, and $\{a_1,a_2,\ldots,a_k\} $ be a \textbf{reduced residue system} mod n, ie, this is the set of integers satisfying $\phi(n)$.  I may choose any a.  This must already satisfy $gcd(a,n)=1$.  Then, $\{aa_1,\ldots,aa_k\}$ must also be a reduced residue system mod n.  
+	                Therefore they are the same set mod n and have the same product mod n.
+	                $$ aa_1aa_2\ldots aa_k\equiv a_1a_2\ldots a_k\ (mod\ n)$$
+	                $$ a^k(a_1a_2\ldots a_k)\equiv a_1a_2\ldots a_k\ (mod\ n) $$
+	                Each of these are relatively prime to n, thus each has an inverse mod n, therefore
+	                $$a^k \equiv 1\ (mod\ n)$$
+	                ie,
+	                $$a^{\phi(n)} \equiv 1\ (mod\ n)$$\cite{Ikenaga}
+	            \end{proof}
+	            
+	        Here we have all of the most important pieces to use our encryption algorithm.
 	        
 	\section{The Rivest-Shamir-Adleman Encryption Algorithm}
-        So now we have finally come to the heart of the matter.  How do we secure messages over the open internet?  The literature often begins by establishing characters Alice, Bob, and Eve, and of the sake of tradition, I will join them.
+        So now we have finally come to the heart of the matter.  How do we secure messages over the open internet?  The literature often begins by establishing characters Alice, Bob, and Eve, and of the sake of tradition, I will join them.  All of these ideas, again, are thanks to Trappe-Washington.\cite{trappewash}
      
         Suppose Alice wants to send a message to Bob over the open internet, but doesn't want Eve, who can intercept their traffic, to know what it said.  Now, Alice and Bob have never met, so they can't share the key to a shift cipher, for example (or, of course, one to a more competent cipher), because then Eve could decrypt their messages anyway.
      
@@ -191,12 +223,87 @@
         She then sends this ciphertext back to Bob, who was able to quickly calculate the decryption key based on his information.  
         The key used to decrypt the cipher text is the multiplicative inverse of the number used to encrypt the message.  We call this number d.  We want a value that satisfies the following.
         $$c^{d}\equiv (m^{e})^{d}\equiv m^{ed} \equiv m^1 \equiv m\ (mod\ n)$$
+        With Euler's Theorem, $a^{\phi(n)} \equiv 1\ (mod\ n)$, and for some $k\in\mathbf{Z}$ we have,
+        $$ m^{ed} \equiv m^1 \equiv m^1(1)^k \equiv m^1(m^{\phi(n)})^k \equiv m^{k\phi(n)+1}\ (mod\ n) $$
+        $$\implies ed=k\phi(n)+1$$
+        $$\implies ed\equiv 1\ (mod\ \phi(n))$$
         
-        So, how do we find d?  For this, we need 
-	        
+        This is an interesting result; it means that $d$ in the multiplicative inverse of $e\ mod\ \phi(n)$.  
+        For moderately large numbers, it turns out it is not very difficult to find its multiplicative inverse around a known modulus, but what, exactly is this modulus?  
+        Recall $$\phi(n)=n\prod_{p|n}(1-\frac{1}{p})$$ 
+        Now we can apply to this our modulus, for which we handily know its factors, p and q.  
+        \begin{equation}
+        \begin{aligned}
+	        \centering
+	        \phi(pq) &= pq(1-\frac{1}{p})(1-\frac{1}{q})\\
+		        &= (p-\frac{p}{p})(q-\frac{q}{q})\\
+		        &= (p-1)(q-1)
+        \end{aligned}
+        \end{equation}
+        
+        Therefore, our decryption exponent $d$, is the multiplicative inverse of $e\ mod\ (p-1)(q-1)$, or visa versa with $d$ and $e$.  
+        Note that this means that Bob must choose $e$ such that $gcd(e,(p-1)(q-1))=1$, as $e$ would otherwise not have a multiplicative inverse.  This will require some extra work on his part.  
+        What's missing here?  
+        First, Eve has knowledge of $e$, and $n$, so why can't she calculate $d$?  
+        The short answer is that calculating $\phi(n)$, as we have seen, requires knowledge of the factors of $n$.  
+        We rely on the knowledge that, despite the efforts of many mathematicians, no easy way to calculate the prime factors of large numbers is known.  
+        The standard method of checking incrementing integers up to $\sqrt{n}$ is infeasible.
+        
+        Say $n$ is 100 digits.  Then $\sqrt{n}$ is around 50 digits.  Then suppose we give our attacker a botnet of 1000 computers\footnote{Or, of course, 250 computers, each with 4 threads, etc.}  all operating at 1GHz, ie, are each able to guess one billion possible integers per second.  
+        $k$ is a real number, $1<k<10$, and $k\times 10^{50}=\sqrt{n}$.
+        $$\displaystyle k\times 10^{50} \times \frac{1\ s}{10^{6}\ guesses} \times \frac{1}{10^3\ comp}  \times \frac{1\ year}{3.154\times 10^{7}\ s} = \frac{k}{3.154} \times 10^{34}\ years$$
+        
+        Which is, of course, longer than the age of the universe.  No doubt, a half sensible attacker begins around $\sqrt{n}$ and moves down, looking through known primes, etc.  But this gives us the point.  It takes a very long time to factor very big numbers.
+        
+        Second, there's a subtle problem that hasn't been addressed with our message, m.  
+        Euler's Theorem stipulates that before $a^{\phi(n)}\equiv 1\ (mod\ n)$, we must have $gcd(a,n)=1$.  However, as stated above, the strength of the RSA cipher comes from the difficulty of factoring large numbers, and we haven't provided to Alice the factors of $n$.  
+        Neither is it easy for her to factor m, unless the pieces are small.  Therefore, Alice has no knowledge of the factors of $m$ or $n$, so how can she guarantee $gcd(m,n)=1$?  
+        
+        The short answer is that she cannot.  But that, moreover, it does not matter.  
+        We can use Euler's theorem to show that Bob will be able to recover the message even in the unlikely case that $gcd(m,n)\ne 1$.
+        \begin{proof}
+        	Note that we can perform this without loss of generality for $q$.
+        	By (Euler), we know that $m^{p}-m=kp$ for some $k\in\mathbf{Z}$, meaning that $m^{p}\equiv m\ (mod\ p)$.  And by our construction of $e$ and $d$, we have $ed=c(p-1)(q-1)+1$ for some $c\in\mathbf{Z}$.  Therefore,
+        	\begin{equation}
+        	\begin{aligned}
+        	m^{ed} &\equiv m^{ed}(1)\equiv m^{ed}\frac{m^p}{m^1} \equiv m^{ed}m^{p-1}\equiv m^{ed+p-1}\equiv m^{k(p-1)+1+p-1}\\
+	        	&\equiv m^{(k+1)(p-1)+1}\equiv (m^{k+1})^{p-1}m\equiv m\ (mod\ p)
+        	\end{aligned}
+        	\end{equation}
+        	As this holds for both $p$ and $q$, even if $m$ shares $p$ or $q$ as factors, we have $$m^{ed}=c_1p+m=c_2q+m=c_3pq+m,\ (p\ne q)$$ 
+        	And, as $n=pq$, we have $$m^{ed}\equiv m\ (mod\ n)$$
+        \end{proof}
+        
+        So, we can see that while Bob can always recover the message, Eve cannot.  Our encryption is successful!
+        
+        
+        
+        \begin{thebibliography}{}
+        	\bibitem{trappewash}
+		        Wade Trappe and Lawrence C. Washington,
+		        \emph{Introduction to Cryptography with Coding Theory},
+		        Prentice Hall,
+		        1st edition,
+		        2002.
+		        
+		    \bibitem{Ikenaga}
+			    Bruce Ikenaga,
+			    \emph{Euler's Theorem},
+			    http://www.millersville.edu/$\sim$bikenaga/number-theory/euler/euler.html,
+			    2008.
+			    
+			\bibitem{Long}%87-88
+			    Calvin Long,
+			    Elementary Introduction to Number Theory,
+			    D. C. Heath and Company,
+			    2nd edition,
+			    1972.
+				
+		        
+        \end{thebibliography}
         
 \end{document}
-
+%http://www.millersville.edu/~bikenaga/number-theory/euler/euler.html
 
 
 
